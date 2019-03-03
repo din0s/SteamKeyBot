@@ -52,7 +52,7 @@ object ActivityHandler : ListenerAdapter() {
     }
 
     private fun User.roll(percentage: Double) {
-        val random = Random.nextDouble()
+        val random = Random.nextDouble() * 100
         LOG.debug("$asTag rolled $random. (needed: <=$percentage)")
         if (random >= percentage) return
         if (KeyHandler.isEmpty()) {
@@ -90,7 +90,7 @@ object ActivityHandler : ListenerAdapter() {
     override fun onGuildMessageReceived(event: GuildMessageReceivedEvent) {
         if (event.author.isBot || event.channel.id != ConfigEntry.CHANNEL.value) return
 
-        val percent = ConfigEntry.TEXT_PERCENTAGE.value.toDouble() / 100
+        val percent = ConfigEntry.TEXT_PERCENTAGE.value.toDouble()
         event.author.roll(percent)
     }
 
@@ -110,7 +110,7 @@ object ActivityHandler : ListenerAdapter() {
             LOG.debug("${user.asTag} left his active VC. (was on for $mins mins)")
             if (mins == 0L) return
 
-            val win = ConfigEntry.VOICE_PERCENTAGE.value.toDouble() / 100
+            val win = ConfigEntry.VOICE_PERCENTAGE.value.toDouble()
             val loss = 1 - win
             val lossTotal = Math.pow(loss, mins.toDouble())
             val percent = 1 - lossTotal
