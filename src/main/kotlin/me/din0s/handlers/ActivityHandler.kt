@@ -51,7 +51,7 @@ object ActivityHandler : ListenerAdapter() {
         }
     }
 
-    private fun User.roll(percentage: Double) {
+    private fun User.roll(percentage: Double, voice: Boolean = false) {
         val random = Random.nextDouble() * 100
         LOG.debug("$asTag rolled $random. (needed: <=$percentage)")
         if (random >= percentage) return
@@ -78,7 +78,8 @@ object ActivityHandler : ListenerAdapter() {
             )
             jda.getTextChannelById(ConfigEntry.CHANNEL.value).sendMessage(embed.build()).queue()
 
-            LOG.info("$asTag won a key!")
+            val source = if (voice) "VC" else "TXT"
+            LOG.info("$asTag won a key! [$source]")
 
             val keyCount = KeyHandler.keyCount()
             if (keyCount <= ConfigEntry.KEY_THRESHOLD.value.toInt()) {
@@ -114,7 +115,7 @@ object ActivityHandler : ListenerAdapter() {
             val loss = 1 - win
             val lossTotal = Math.pow(loss, mins.toDouble())
             val percent = 1 - lossTotal
-            user.roll(percent)
+            user.roll(percent, true)
         } else if (!voiceUsers.containsKey(id) && !nullOrAfk) {
             voiceUsers[id] = OffsetDateTime.now()
             LOG.debug("${user.asTag} joined an active VC.")
