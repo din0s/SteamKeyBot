@@ -39,8 +39,8 @@ object CommandHandler : ListenerAdapter() {
             Config.load()
             KeyHandler.load()
 
-            val text = ConfigEntry.TEXT_PERCENTAGE.value.toInt()
-            val voice = ConfigEntry.VOICE_PERCENTAGE.value.toInt()
+            val text = ConfigEntry.TEXT_PERCENTAGE.value.toDouble()
+            val voice = ConfigEntry.VOICE_PERCENTAGE.value.toDouble()
             val keyCount = KeyHandler.keyCount()
             event.channel.sendMessage(
                 "```css\n" +

@@ -65,7 +65,7 @@ object ActivityHandler : ListenerAdapter() {
             val key = KeyHandler.pop()
 
             embed.setTitle("Congratulations, you won!")
-            embed.setColor(Color.RED)
+            embed.setColor(Color.decode("#2ECC71"))
             embed.appendDescription("Your Steam Key is **`$key`**.\n\n")
             embed.appendDescription("Thank you for being active in our community!\n")
             embed.appendDescription("[Click here for info on how to redeem it!](https://support.steampowered.com/kb_article.php?ref=5414-tfbn-1352)")
@@ -73,8 +73,8 @@ object ActivityHandler : ListenerAdapter() {
 
             embed.setTitle("A Steam Key was dropped!")
             embed.setDescription(
-                "**Congrats, $asMention!** You just earned a game key for being active!\n\n" +
-                        "Engage in text and voice channels in order to win awesome prizes! \uD83C\uDF81"
+                "**Congrats, $asMention!**\nYou just won a game key for being active!\n\n" +
+                        "Keep engaging in text and voice channels to get more awesome prizes! \uD83C\uDF81"
             )
             jda.getTextChannelById(ConfigEntry.CHANNEL.value).sendMessage(embed.build()).queue()
 
@@ -90,7 +90,7 @@ object ActivityHandler : ListenerAdapter() {
     override fun onGuildMessageReceived(event: GuildMessageReceivedEvent) {
         if (event.author.isBot || event.channel.id != ConfigEntry.CHANNEL.value) return
 
-        val percent = ConfigEntry.TEXT_PERCENTAGE.value.toInt() / 100.0
+        val percent = ConfigEntry.TEXT_PERCENTAGE.value.toDouble() / 100
         event.author.roll(percent)
     }
 
@@ -110,7 +110,7 @@ object ActivityHandler : ListenerAdapter() {
             LOG.debug("${user.asTag} left his active VC. (was on for $mins mins)")
             if (mins == 0L) return
 
-            val win = ConfigEntry.VOICE_PERCENTAGE.value.toInt() / 100.0
+            val win = ConfigEntry.VOICE_PERCENTAGE.value.toDouble() / 100
             val loss = 1 - win
             val lossTotal = Math.pow(loss, mins.toDouble())
             val percent = 1 - lossTotal
