@@ -60,31 +60,36 @@ object ActivityHandler : ListenerAdapter() {
             return
         }
 
-        openPrivateChannel().queue({
-            val embed = EmbedBuilder()
-            val key = KeyHandler.pop()
+        openPrivateChannel().queue({ channel ->
+            // ugly workaround to see if we're not blocked :\
+            channel.sendMessage("\uD83C\uDF89\uD83C\uDF89\uD83C\uDF89").queue({
+                val embed = EmbedBuilder()
+                val key = KeyHandler.pop()
 
-            embed.setTitle("Congratulations, you won!")
-            embed.setColor(Color.decode("#2ECC71"))
-            embed.appendDescription("Your Steam Key is **`$key`**.\n\n")
-            embed.appendDescription("Thank you for being active in our community!\n")
-            embed.appendDescription("[Click here for info on how to redeem it!](https://support.steampowered.com/kb_article.php?ref=5414-tfbn-1352)")
-            it.sendMessage(embed.build()).queue()
+                embed.setTitle("Congratulations, you won!")
+                embed.setColor(Color.decode("#2ECC71"))
+                embed.appendDescription("Your Steam Key is **`$key`**.\n\n")
+                embed.appendDescription("Thank you for being active in our community!\n")
+                embed.appendDescription("[Click here for info on how to redeem it!](https://support.steampowered.com/kb_article.php?ref=5414-tfbn-1352)")
+                it.editMessage(embed.build()).queue()
 
-            embed.setTitle("A Steam Key was dropped!")
-            embed.setDescription(
-                "**Congrats, $asMention!**\nYou just won a game key for being active!\n\n" +
-                        "Keep engaging in text and voice channels to get more awesome prizes! \uD83C\uDF81"
-            )
-            jda.getTextChannelById(ConfigEntry.CHANNEL.value).sendMessage(embed.build()).queue()
+                val publicEmbed = EmbedBuilder()
+                publicEmbed.setTitle("A Steam Key was dropped!")
+                publicEmbed.setColor(Color.decode("#2ECC71"))
+                publicEmbed.setDescription(
+                    "**Congrats, $asMention!**\nYou just won a game key for being active!\n\n" +
+                            "Keep engaging in text and voice channels to get more awesome prizes! \uD83C\uDF81"
+                )
+                jda.getTextChannelById(ConfigEntry.CHANNEL.value).sendMessage(publicEmbed.build()).queue()
 
-            val source = if (voice) "VC" else "TXT"
-            LOG.info("$asTag won a key! [$source]")
+                val source = if (voice) "VC" else "TXT"
+                LOG.info("$asTag won a key! [$source]")
 
-            val keyCount = KeyHandler.keyCount()
-            if (keyCount <= ConfigEntry.KEY_THRESHOLD.value.toInt()) {
-                jda.notifyOwner(keyCount)
-            }
+                val keyCount = KeyHandler.keyCount()
+                if (keyCount <= ConfigEntry.KEY_THRESHOLD.value.toInt()) {
+                    jda.notifyOwner(keyCount)
+                }
+            }, {})
         }, {})
     }
 
